@@ -143,5 +143,5 @@ module.exports = {
   registerUserController,
   loginUserController,
   logoutUserController,
-  getMeController
+  getMeController,
 };
