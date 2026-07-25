@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 /**
  * @name registerUserController
  * @description register a new user, expects username, email and password in the request body
- * @access Public
+ * @access public
  */
 
 async function registerUserController(req, res) {
@@ -56,7 +56,7 @@ async function registerUserController(req, res) {
 /**
  * @name loginUserController
  * @description login a user, expects email and password in the request body
- * @access Public
+ * @access public
  */
 async function loginUserController(req, res) {
   const { email, password } = req.body;
@@ -95,7 +95,27 @@ async function loginUserController(req, res) {
   });
 }
 
+/**
+ * @name logoutUserController
+ * @description clear token from user cookie and add the token in blacklist
+ * @access public
+ */
+async function logoutUserController(req, res) {
+  const token = req.cookies.token;
+
+  if (token) {
+    await tokenBlacklistModel.create({ token });
+  }
+
+  res.clearCookie("token");
+
+  res.status(200).json({
+    message: "User logged out successfully",
+  });
+}
+
 module.exports = {
   registerUserController,
   loginUserController,
+  logoutUserController
 };
