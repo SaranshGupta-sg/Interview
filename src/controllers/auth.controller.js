@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const tokenBlacklistModel = require("../models/blacklist.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -101,10 +102,16 @@ async function loginUserController(req, res) {
  * @access public
  */
 async function logoutUserController(req, res) {
-  const token = req.cookies.token;
+  console.log("Cookies:", req.cookies);
+
+  const token = req.cookies?.token;
+
+  console.log("Token:", token);
 
   if (token) {
+    console.log("Saving token...");
     await tokenBlacklistModel.create({ token });
+    console.log("Token saved.");
   }
 
   res.clearCookie("token");
@@ -117,5 +124,5 @@ async function logoutUserController(req, res) {
 module.exports = {
   registerUserController,
   loginUserController,
-  logoutUserController
+  logoutUserController,
 };
