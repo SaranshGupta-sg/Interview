@@ -1,0 +1,11 @@
+const resume = `Rahul Sharma\n\nEmail: rahul.sharma@gmail.com\nPhone: +91-9876543210\n\nSUMMARY\nFull Stack MERN Developer with hands-on experience in developing responsive web applications and RESTful APIs using React.js, Node.js, Express.js, and MongoDB. Passionate about backend development and problem solving.\n\nTECHNICAL SKILLS\n• Languages: JavaScript, HTML, CSS\n• Frontend: React.js, Tailwind CSS\n• Backend: Node.js, Express.js\n• Database: MongoDB, Mongoose\n• Authentication: JWT, Cookies, bcrypt\n• Tools: Git, GitHub, Postman, VS Code\n\nPROJECTS\n1. AI Interview Preparation Platform\n- Built authentication using JWT and Cookies.\n- Implemented resume analysis and interview report generation.\n- Created REST APIs using Express.js.\n- Used MongoDB to store users and interview reports.\n\n2. Expense Tracker\n- User authentication.\n- CRUD APIs.\n- MongoDB database integration.\n\n3. Task Manager\n- Authentication.\n- RESTful APIs.\n- Responsive React frontend.\n\nEDUCATION\nBachelor of Technology in Computer Science\n\nSTRENGTHS\n• Problem Solving\n• Quick Learner\n• Team Player\n• Communication Skills
+}`;
+
+
+const selfDescription = `Hi, my name is Rahul Sharma. I am a Full Stack MERN Developer with a strong interest in backend development. I have built several personal projects using React, Node.js, Express, and MongoDB. Recently, I developed an AI-powered Interview Preparation platform that provides resume analysis, interview questions, and personalized preparation plans. I enjoy learning new technologies, solving DSA problems on LeetCode, and building scalable web applications. I am currently looking for an opportunity to work as a Backend Developer where I can improve my backend architecture and system design skills.`
+
+const jobDescription = `We are looking for a Backend Developer with experience in Node.js, Express.js, MongoDB, REST APIs, JWT Authentication, and Git. The candidate should have strong knowledge of JavaScript, asynchronous programming, database design, and API development. Experience with React, Docker, AWS, and CI/CD is a plus. The candidate should possess good problem-solving skills, communication skills, and familiarity with Data Structures and Algorithms.`
+
+module.exports = {
+    resume, selfDescription, jobDescription
+}
