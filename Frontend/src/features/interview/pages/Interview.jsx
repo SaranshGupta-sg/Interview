@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "../style/interview.scss";
+import { useInterview } from "../hooks/useInterview.js";
+import { useParams } from "react-router";
 
 const NAV_ITEMS = [
   {
@@ -127,27 +130,29 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
   const [activeNav, setActiveNav] = useState("technical");
-//   const { report, getReportById, loading, getResumePdf } = useInterview();
-//   const { interviewId } = useParams();
+  const { report, getReportById, loading, getResumePdf } = useInterview();
+  const { interviewId } = useParams();
 
-//   useEffect(() => {
-//     if (interviewId) {
-//       getReportById(interviewId);
-//     }
-//   }, [interviewId]);
+  useEffect(() => {
+    if (interviewId) {
+      getReportById(interviewId);
+    }
+  }, [interviewId]);
 
-//   if (loading || !report) {
-//     return (
-//       <main className="loading-screen">
-//         <h1>Loading your interview plan...</h1>
-//       </main>
-//     );
+  if (loading || !report) {
+    return (
+      <main className="loading-screen">
+        <h1>Loading your interview plan...</h1>
+      </main>
+    );
   }
 
   const scoreColor =
-        report.matchScore >= 80 ? 'score--high' :
-            report.matchScore >= 60 ? 'score--mid' : 'score--low'
-
+    report.matchScore >= 80
+      ? "score--high"
+      : report.matchScore >= 60
+        ? "score--mid"
+        : "score--low";
 
   return (
     <div className="interview-page">
@@ -168,9 +173,9 @@ const Interview = () => {
             ))}
           </div>
           <button
-            // onClick={() => {
-            //   getResumePdf(interviewId);
-            // }}
+            onClick={() => {
+              getResumePdf(interviewId);
+            }}
             className="button primary-button"
           >
             <svg
@@ -190,7 +195,7 @@ const Interview = () => {
 
         {/* ── Center Content ── */}
         <main className="interview-content">
-          {/* {activeNav === "technical" && (
+          {activeNav === "technical" && (
             <section>
               <div className="content-header">
                 <h2>Technical Questions</h2>
@@ -204,9 +209,9 @@ const Interview = () => {
                 ))}
               </div>
             </section>
-          )} */}
+          )}
 
-          {/* {activeNav === "behavioral" && (
+          {activeNav === "behavioral" && (
             <section>
               <div className="content-header">
                 <h2>Behavioral Questions</h2>
@@ -220,9 +225,9 @@ const Interview = () => {
                 ))}
               </div>
             </section>
-          )} */}
+          )}
 
-          {/* {activeNav === "roadmap" && (
+          {activeNav === "roadmap" && (
             <section>
               <div className="content-header">
                 <h2>Preparation Road Map</h2>
@@ -236,7 +241,7 @@ const Interview = () => {
                 ))}
               </div>
             </section>
-          )} */}
+          )}
         </main>
 
         <div className="interview-divider" />
@@ -247,7 +252,7 @@ const Interview = () => {
           <div className="match-score">
             <p className="match-score__label">Match Score</p>
             <div className={`match-score__ring ${scoreColor}`}>
-              {/* <span className="match-score__value">{report.matchScore}</span> */}
+              <span className="match-score__value">{report.matchScore}</span>
               <span className="match-score__pct">%</span>
             </div>
             <p className="match-score__sub">Strong match for this role</p>
@@ -259,14 +264,14 @@ const Interview = () => {
           <div className="skill-gaps">
             <p className="skill-gaps__label">Skill Gaps</p>
             <div className="skill-gaps__list">
-              {/* {report.skillGaps.map((gap, i) => (
+              {report.skillGaps.map((gap, i) => (
                 <span
                   key={i}
                   className={`skill-tag skill-tag--${gap.severity}`}
                 >
                   {gap.skill}
                 </span>
-              ))} */}
+              ))}
             </div>
           </div>
         </aside>
