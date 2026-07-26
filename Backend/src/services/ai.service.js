@@ -97,22 +97,115 @@ async function generateInterviewReport({
   selfDescription,
   jobDescription,
 }) {
-  const prompt = `Generate an interview report for a candidate with the following details:
-  Resume: ${resume}
-  Self Description: ${selfDescription}
-  Job Description: ${jobDescription}
+  const prompt = `
+You are a senior technical interviewer and hiring manager.
+
+Analyze the candidate's resume, self description and the job description.
+
+Return ONLY valid JSON.
+
+Do not return markdown.
+Do not return explanations.
+Do not return comments.
+Do not wrap the JSON inside \`\`\`.
+
+The JSON MUST exactly follow this structure.
+
+{
+  "title": "string",
+
+  "matchScore": number,
+
+  "technicalQuestions": [
+    {
+      "question": "string",
+      "intention": "string",
+      "answer": "string"
+    }
+  ],
+
+  "behavioralQuestions": [
+    {
+      "question": "string",
+      "intention": "string",
+      "answer": "string"
+    }
+  ],
+
+  "skillGaps": [
+    {
+      "skill": "string",
+      "severity": "low | medium | high"
+    }
+  ],
+
+  "preparationPlan": [
+    {
+      "day": number,
+      "focus": "string",
+      "tasks": [
+        "string",
+        "string",
+        "string"
+      ]
+    }
+  ]
+}
+
+Requirements:
+
+- title must be the job title.
+- matchScore must be a number between 0 and 100.
+- Generate exactly 5 technical questions.
+- Every technical question must contain:
+  - question
+  - intention
+  - answer
+- Generate exactly 5 behavioral questions.
+- Every behavioral question must contain:
+  - question
+  - intention
+  - answer
+- Generate at least 5 skill gaps.
+- Every skill gap must contain:
+  - skill
+  - severity
+- severity must only be one of:
+  - low
+  - medium
+  - high
+- Generate a 7-day preparation plan.
+- Every day must contain:
+  - day
+  - focus
+  - tasks
+- tasks MUST be an array of at least 3 strings.
+- Return ONLY JSON.
+
+Resume:
+${resume}
+
+Self Description:
+${selfDescription}
+
+Job Description:
+${jobDescription}
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.6-flash",
     contents: prompt,
     config: {
-      responseMimeType: "application/json",
-      responseSchema: zodToJsonSchema(interviewReportSchema),
+      responseFormat: {
+        text: {
+          mimeType: "application/json",
+          schema: zodToJsonSchema(interviewReportSchema),
+        },
+      },
     },
   });
 
   return JSON.parse(response.text);
 }
 
-module.exports = invokeGemini;
+module.exports = generateInterviewReport;
