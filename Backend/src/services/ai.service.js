@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
 const { zodToJsonSchema } = require("zod-to-json-schema");
+const puppeteer = require("puppeteer");
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GENAI_API_KEY,
@@ -208,4 +209,104 @@ ${jobDescription}
   return JSON.parse(response.text);
 }
 
-module.exports = generateInterviewReport;
+async function generatePdfFromHtml(htmlContent) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+  const pdfBuffer = await page.pdf({
+    format: "A4",
+    margin: {
+      top: "20mm",
+      bottom: "20mm",
+      left: "15mm",
+      right: "15mm",
+    },
+  });
+
+  await browser.close();
+
+  return pdfBuffer;
+}
+
+async function generateResumePdf({ resume, selfDescription, jobDescription }) {
+  const resumePdfSchema = z.object({
+    html: z
+      .string()
+      .describe(
+        "Complete HTML document including <!DOCTYPE html>, <html>, <head>, <body>.",
+      ),
+  });
+
+  const prompt = `
+You are an expert ATS Resume Writer.
+
+Return ONLY valid JSON.
+
+The response MUST be a JSON object.
+
+Do not use markdown.
+
+Do not wrap the response inside code fences.
+
+The response must start with {
+
+The response must end with }
+
+Schema:
+
+{
+  "html": "<complete HTML document>"
+}
+
+Generate a professional ATS-friendly resume.
+
+Resume:
+${resume}
+
+Self Description:
+${selfDescription}
+
+Job Description:
+${jobDescription}
+`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3.6-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: zodToJsonSchema(resumePdfSchema),
+    },
+  });
+
+  let text = response.text.trim();
+
+  console.log("========== RAW RESPONSE ==========");
+  console.log(text);
+  console.log("==================================");
+
+  // Remove markdown if Gemini returns it
+  text = text
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/\s*```$/i, "");
+
+  // Extract only JSON
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+
+  if (firstBrace === -1 || lastBrace === -1) {
+    throw new Error("Gemini did not return valid JSON.");
+  }
+
+  text = text.substring(firstBrace, lastBrace + 1);
+
+  const jsonContent = JSON.parse(text);
+
+  const pdfBuffer = await generatePdfFromHtml(jsonContent.html);
+
+  return pdfBuffer;
+}
+
+module.exports = { generateInterviewReport, generateResumePdf };
