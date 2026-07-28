@@ -150,7 +150,7 @@ const Home = () => {
                         Click to upload or drag &amp; drop
                       </p>
                       <p className="mt-1 text-xs text-ink-muted">
-                        PDF or DOCX (Max 5MB)
+                        PDF (Max 3MB)
                       </p>
                     </>
                   )}
