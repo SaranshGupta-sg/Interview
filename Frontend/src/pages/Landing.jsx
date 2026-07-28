@@ -4,7 +4,7 @@ import FeaturesSection from "../components/FeaturesSection";
 import HowItWorksSection from "../components/HowItWorksSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import FAQSection from "../components/FAQSection";
-
+import Footer from "../components/Footer";
 
 const Landing = () => {
   return (
@@ -15,7 +15,7 @@ const Landing = () => {
       <HowItWorksSection />
       <TestimonialsSection />
       <FAQSection />
-      
+      <Footer />
     </>
   );
 };

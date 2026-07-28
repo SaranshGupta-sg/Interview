@@ -1,0 +1,23 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100" height="100" rx="24" fill="#0F5D5A"/>
+
+  <!-- Speech bubble -->
+  <path
+    d="M20 32C20 25.373 25.373 20 32 20H68C74.627 20 80 25.373 80 32V56C80 62.627 74.627 68 68 68H40L26 80V68H32C25.373 68 20 62.627 20 56V32Z"
+    fill="#F5F8F6"
+  />
+
+  <!-- Checkmark -->
+  <path
+    d="M33 45L44 56L67 31"
+    stroke="#0F5D5A"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Accent spark -->
+  <circle cx="78" cy="20" r="7" fill="#F2A65A"/>
+</svg>

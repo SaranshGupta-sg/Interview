@@ -1,125 +1,80 @@
-import { useState, useEffect } from "react";
-import "../style/interview.scss";
+import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router";
+import gsap from "gsap";
+import { Code2, MessageSquare, Map, ChevronDown, Download } from "lucide-react";
 import { useInterview } from "../hooks/useInterview.js";
-import { useParams } from 'react-router'
 
 const NAV_ITEMS = [
-  {
-    id: "technical",
-    label: "Technical Questions",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polyline points="16 18 22 12 16 6" />
-        <polyline points="8 6 2 12 8 18" />
-      </svg>
-    ),
-  },
-  {
-    id: "behavioral",
-    label: "Behavioral Questions",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-    ),
-  },
-  {
-    id: "roadmap",
-    label: "Road Map",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polygon points="3 11 22 2 13 21 11 13 3 11" />
-      </svg>
-    ),
-  },
+  { id: "technical", label: "Technical Questions", icon: Code2 },
+  { id: "behavioral", label: "Behavioral Questions", icon: MessageSquare },
+  { id: "roadmap", label: "Road Map", icon: Map },
 ];
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+const SEVERITY_STYLES = {
+  low: "bg-primary-light text-primary-dark",
+  medium: "bg-accent-light text-accent",
+  high: "bg-red-100 text-red-600",
+};
+
+// ── Sub-components ──────────────────────────────────────────────
 const QuestionCard = ({ item, index }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="q-card">
-      <div className="q-card__header" onClick={() => setOpen((o) => !o)}>
-        <span className="q-card__index">Q{index + 1}</span>
-        <p className="q-card__question">{item.question}</p>
-        <span
-          className={`q-card__chevron ${open ? "q-card__chevron--open" : ""}`}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+    <div
+      className={`overflow-hidden rounded-2xl border bg-surface transition-colors ${open ? "border-primary/30" : "border-border"}`}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-4 px-6 py-5 text-left"
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-light font-mono text-xs font-semibold text-primary-dark">
+          Q{index + 1}
         </span>
-      </div>
-      {open && (
-        <div className="q-card__body">
-          <div className="q-card__section">
-            <span className="q-card__tag q-card__tag--intention">
-              Intention
-            </span>
-            <p>{item.intention}</p>
-          </div>
-          <div className="q-card__section">
-            <span className="q-card__tag q-card__tag--answer">
-              Model Answer
-            </span>
-            <p>{item.answer}</p>
+        <p className="flex-1 font-medium text-ink">{item.question}</p>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-ink-muted transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <div
+        className={`grid transition-all duration-300 ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-4 px-6 pb-6">
+            <div>
+              <span className="mb-2 inline-block rounded-full bg-primary-light px-3 py-1 text-xs font-medium text-primary-dark">
+                Intention
+              </span>
+              <p className="leading-7 text-ink-muted">{item.intention}</p>
+            </div>
+            <div>
+              <span className="mb-2 inline-block rounded-full bg-accent-light px-3 py-1 text-xs font-medium text-accent">
+                Model Answer
+              </span>
+              <p className="leading-7 text-ink-muted">{item.answer}</p>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 const RoadMapDay = ({ day }) => (
-  <div className="roadmap-day">
-    <div className="roadmap-day__header">
-      <span className="roadmap-day__badge">Day {day.day}</span>
-      <h3 className="roadmap-day__focus">{day.focus}</h3>
+  <div className="rounded-2xl border border-border bg-surface p-6">
+    <div className="mb-4 flex items-center gap-3">
+      <span className="rounded-full bg-primary px-3 py-1 font-mono text-xs font-semibold text-white">
+        Day {day.day}
+      </span>
+      <h3 className="font-display text-lg font-semibold text-ink">
+        {day.focus}
+      </h3>
     </div>
-    <ul className="roadmap-day__tasks">
+    <ul className="space-y-2">
       {day.tasks.map((task, i) => (
-        <li key={i}>
-          <span className="roadmap-day__bullet" />
+        <li key={i} className="flex items-start gap-3 text-ink-muted">
+          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
           {task}
         </li>
       ))}
@@ -127,11 +82,71 @@ const RoadMapDay = ({ day }) => (
   </div>
 );
 
-// ── Main Component ────────────────────────────────────────────────────────────
+const MatchScoreRing = ({ score }) => {
+  const circleRef = useRef(null);
+  const valueRef = useRef(null);
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius;
+
+  const color = score >= 80 ? "#0F5D5A" : score >= 60 ? "#F2A65A" : "#DC2626";
+
+  useEffect(() => {
+    const counter = { val: 0 };
+    gsap.to(counter, {
+      val: score,
+      duration: 1.2,
+      ease: "power2.out",
+      onUpdate: () => {
+        const v = Math.round(counter.val);
+        if (valueRef.current) valueRef.current.textContent = v;
+        if (circleRef.current) {
+          const offset = circumference - (v / 100) * circumference;
+          circleRef.current.style.strokeDashoffset = offset;
+        }
+      },
+    });
+  }, [score]);
+
+  return (
+    <div className="relative flex h-40 w-40 items-center justify-center">
+      <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120">
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          fill="none"
+          stroke="#E3E9E6"
+          strokeWidth="10"
+        />
+        <circle
+          ref={circleRef}
+          cx="60"
+          cy="60"
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference}
+        />
+      </svg>
+      <div className="absolute flex items-baseline font-mono font-bold text-ink">
+        <span ref={valueRef} className="text-4xl">
+          0
+        </span>
+        <span className="text-xl">%</span>
+      </div>
+    </div>
+  );
+};
+
+// ── Main Component ──────────────────────────────────────────────
 const Interview = () => {
   const [activeNav, setActiveNav] = useState("technical");
   const { report, getReportById, loading, getResumePdf } = useInterview();
   const { interviewId } = useParams();
+  const contentRef = useRef(null);
 
   useEffect(() => {
     if (interviewId) {
@@ -139,71 +154,78 @@ const Interview = () => {
     }
   }, [interviewId]);
 
+  useEffect(() => {
+    if (contentRef.current) {
+      gsap.fromTo(
+        contentRef.current.children,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, ease: "power2.out" },
+      );
+    }
+  }, [activeNav, report]);
+
   if (loading || !report) {
     return (
-      <main className="loading-screen">
-        <h1>Loading your interview plan...</h1>
+      <main className="flex min-h-screen items-center justify-center bg-bg">
+        <div className="flex items-center gap-3 text-ink-muted">
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          Loading your interview plan...
+        </div>
       </main>
     );
   }
 
-  const scoreColor =
-    report.matchScore >= 80
-      ? "score--high"
-      : report.matchScore >= 60
-        ? "score--mid"
-        : "score--low";
-
   return (
-    <div className="interview-page">
-      <div className="interview-layout">
+    <div className="min-h-screen bg-bg pt-28">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 pb-20 lg:grid-cols-[220px_1fr_280px] lg:px-10">
         {/* ── Left Nav ── */}
-        <nav className="interview-nav">
-          <div className="nav-content">
-            <p className="interview-nav__label">Sections</p>
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item.id}
-                className={`interview-nav__item ${activeNav === item.id ? "interview-nav__item--active" : ""}`}
-                onClick={() => setActiveNav(item.id)}
-              >
-                <span className="interview-nav__icon">{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
+        <nav className="lg:sticky lg:top-28 lg:self-start">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-ink-muted/70">
+            Sections
+          </p>
+          <div className="flex gap-2 overflow-x-auto lg:flex-col lg:gap-1 lg:overflow-visible">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const active = activeNav === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveNav(item.id)}
+                  className={`flex shrink-0 items-center gap-3 whitespace-nowrap rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-primary text-white"
+                      : "text-ink-muted hover:bg-primary-light hover:text-primary-dark"
+                  }`}
+                >
+                  <Icon size={16} />
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
+
           <button
-            onClick={() => {
-              getResumePdf(interviewId);
-            }}
-            className="button primary-button"
+            onClick={() => getResumePdf(interviewId)}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] hover:bg-primary-dark"
           >
-            <svg
-              height={"0.8rem"}
-              style={{ marginRight: "0.8rem" }}
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M10.6144 17.7956 11.492 15.7854C12.2731 13.9966 13.6789 12.5726 15.4325 11.7942L17.8482 10.7219C18.6162 10.381 18.6162 9.26368 17.8482 8.92277L15.5079 7.88394C13.7092 7.08552 12.2782 5.60881 11.5105 3.75894L10.6215 1.61673C10.2916.821765 9.19319.821767 8.8633 1.61673L7.97427 3.75892C7.20657 5.60881 5.77553 7.08552 3.97685 7.88394L1.63658 8.92277C.868537 9.26368.868536 10.381 1.63658 10.7219L4.0523 11.7942C5.80589 12.5726 7.21171 13.9966 7.99275 15.7854L8.8704 17.7956C9.20776 18.5682 10.277 18.5682 10.6144 17.7956ZM19.4014 22.6899 19.6482 22.1242C20.0882 21.1156 20.8807 20.3125 21.8695 19.8732L22.6299 19.5353C23.0412 19.3526 23.0412 18.7549 22.6299 18.5722L21.9121 18.2532C20.8978 17.8026 20.0911 16.9698 19.6586 15.9269L19.4052 15.3156C19.2285 14.8896 18.6395 14.8896 18.4628 15.3156L18.2094 15.9269C17.777 16.9698 16.9703 17.8026 15.956 18.2532L15.2381 18.5722C14.8269 18.7549 14.8269 19.3526 15.2381 19.5353L15.9985 19.8732C16.9874 20.3125 17.7798 21.1156 18.2198 22.1242L18.4667 22.6899C18.6473 23.104 19.2207 23.104 19.4014 22.6899Z"></path>
-            </svg>
+            <Download size={16} />
             Download Resume
           </button>
         </nav>
 
-        <div className="interview-divider" />
-
         {/* ── Center Content ── */}
-        <main className="interview-content">
+        <main ref={contentRef}>
           {activeNav === "technical" && (
             <section>
-              <div className="content-header">
-                <h2>Technical Questions</h2>
-                <span className="content-header__count">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-semibold text-ink">
+                  Technical Questions
+                </h2>
+                <span className="text-sm text-ink-muted">
                   {report.technicalQuestions.length} questions
                 </span>
               </div>
-              <div className="q-list">
+              <div className="space-y-4">
                 {report.technicalQuestions.map((q, i) => (
                   <QuestionCard key={i} item={q} index={i} />
                 ))}
@@ -213,13 +235,15 @@ const Interview = () => {
 
           {activeNav === "behavioral" && (
             <section>
-              <div className="content-header">
-                <h2>Behavioral Questions</h2>
-                <span className="content-header__count">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-semibold text-ink">
+                  Behavioral Questions
+                </h2>
+                <span className="text-sm text-ink-muted">
                   {report.behavioralQuestions.length} questions
                 </span>
               </div>
-              <div className="q-list">
+              <div className="space-y-4">
                 {report.behavioralQuestions.map((q, i) => (
                   <QuestionCard key={i} item={q} index={i} />
                 ))}
@@ -229,13 +253,15 @@ const Interview = () => {
 
           {activeNav === "roadmap" && (
             <section>
-              <div className="content-header">
-                <h2>Preparation Road Map</h2>
-                <span className="content-header__count">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-semibold text-ink">
+                  Preparation Road Map
+                </h2>
+                <span className="text-sm text-ink-muted">
                   {report.preparationPlan.length}-day plan
                 </span>
               </div>
-              <div className="roadmap-list">
+              <div className="space-y-4">
                 {report.preparationPlan.map((day) => (
                   <RoadMapDay key={day.day} day={day} />
                 ))}
@@ -244,30 +270,33 @@ const Interview = () => {
           )}
         </main>
 
-        <div className="interview-divider" />
-
         {/* ── Right Sidebar ── */}
-        <aside className="interview-sidebar">
-          {/* Match Score */}
-          <div className="match-score">
-            <p className="match-score__label">Match Score</p>
-            <div className={`match-score__ring ${scoreColor}`}>
-              <span className="match-score__value">{report.matchScore}</span>
-              <span className="match-score__pct">%</span>
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <div className="rounded-2xl border border-border bg-surface p-6 text-center">
+            <p className="mb-4 text-sm font-medium text-ink-muted">
+              Match Score
+            </p>
+            <div className="mx-auto">
+              <MatchScoreRing score={report.matchScore} />
             </div>
-            <p className="match-score__sub">Strong match for this role</p>
+            <p className="mt-4 text-sm text-ink-muted">
+              {report.matchScore >= 80
+                ? "Strong match for this role"
+                : report.matchScore >= 60
+                  ? "Decent match — a few gaps to close"
+                  : "Significant gaps for this role"}
+            </p>
           </div>
 
-          <div className="sidebar-divider" />
-
-          {/* Skill Gaps */}
-          <div className="skill-gaps">
-            <p className="skill-gaps__label">Skill Gaps</p>
-            <div className="skill-gaps__list">
+          <div className="mt-6 rounded-2xl border border-border bg-surface p-6">
+            <p className="mb-4 text-sm font-medium text-ink-muted">
+              Skill Gaps
+            </p>
+            <div className="flex flex-wrap gap-2">
               {report.skillGaps.map((gap, i) => (
                 <span
                   key={i}
-                  className={`skill-tag skill-tag--${gap.severity}`}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium ${SEVERITY_STYLES[gap.severity] || SEVERITY_STYLES.medium}`}
                 >
                   {gap.skill}
                 </span>

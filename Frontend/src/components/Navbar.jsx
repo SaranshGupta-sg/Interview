@@ -10,7 +10,7 @@ const Navbar = () => {
     gsap.fromTo(
       navRef.current,
       { y: -80, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }
+      { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" },
     );
 
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,7 +28,6 @@ const Navbar = () => {
       }`}
     >
       <div className="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-6 lg:px-10">
-
         {/* Logo */}
         <Link to="/" className="flex shrink-0 items-center">
           <span className="font-display text-2xl font-semibold tracking-tight whitespace-nowrap text-ink">
@@ -42,7 +41,10 @@ const Navbar = () => {
             Features
           </a>
 
-          <a href="#how-it-works" className="transition-colors hover:text-primary">
+          <a
+            href="#how-it-works"
+            className="transition-colors hover:text-primary"
+          >
             How it Works
           </a>
 
