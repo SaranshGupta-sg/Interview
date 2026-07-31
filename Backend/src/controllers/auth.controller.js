@@ -42,7 +42,12 @@ async function registerUserController(req, res) {
     { expiresIn: "1d" },
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000, // 1 din
+  });
 
   res.status(201).json({
     message: "User registered successfully",
@@ -84,7 +89,12 @@ async function loginUserController(req, res) {
     { expiresIn: "1d" },
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000, // 1 din
+  });
 
   res.status(200).json({
     message: "User loggedIn Successfully.",
@@ -114,7 +124,11 @@ async function logoutUserController(req, res) {
     console.log("Token saved.");
   }
 
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
 
   res.status(200).json({
     message: "User logged out successfully",
@@ -128,6 +142,10 @@ async function logoutUserController(req, res) {
  */
 async function getMeController(req, res) {
   const user = await userModel.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
   res.status(200).json({
     message: "User details fetched successfully",
