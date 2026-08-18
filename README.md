@@ -59,7 +59,7 @@ Technical + Behavioral Questions
 
 
 # Architecture
-
+```text
 React Frontend
       ↓
 React Context + Custom Hooks
