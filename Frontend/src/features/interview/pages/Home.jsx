@@ -210,7 +210,7 @@ const Home = () => {
             </span>
             <button
               onClick={handleGenerateReport}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] hover:bg-primary-dark sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] hover:bg-primary-dark sm:w-auto cursor-pointer"
             >
               <Sparkles size={18} />
               Generate My Interview Strategy

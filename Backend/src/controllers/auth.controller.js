@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
  * @description register a new user, expects username, email and password in the request body
  * @access public
  */
-
 async function registerUserController(req, res) {
   const { username, email, password } = req.body;
 

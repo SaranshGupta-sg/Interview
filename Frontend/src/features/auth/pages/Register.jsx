@@ -24,8 +24,18 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleRegister({ username, email, password });
-    navigate("/dashboard");
+
+    try {
+      await handleRegister({
+        username,
+        email,
+        password,
+      });
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (loading) {
