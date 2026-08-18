@@ -14,14 +14,14 @@ const testimonials = [
       "The AI-generated interview questions were surprisingly relevant to the actual interview. The preparation roadmap helped me focus on exactly what mattered.",
   },
   {
-    name: "Priya Verma",
+    name: "Shanaya Gupta",
     role: "Frontend Developer",
     company: "Product Company",
     review:
       "I loved the resume analysis feature. It highlighted the missing skills in my profile and generated an ATS-friendly resume that looked far more professional.",
   },
   {
-    name: "Aman Gupta",
+    name: "Jeet Salel",
     role: "MERN Stack Developer",
     company: "Software Engineer",
     review:
@@ -30,7 +30,7 @@ const testimonials = [
 ];
 
 const stats = [
-  { value: 10000, suffix: "+", label: "Interview Reports Generated" },
+  { value: 100, suffix: "+", label: "Interview Reports Generated" },
   { value: 95, suffix: "%", label: "User Satisfaction" },
   { value: 50, suffix: "+", label: "Supported Job Roles" },
   { value: 24, suffix: "/7", label: "AI Availability" },
