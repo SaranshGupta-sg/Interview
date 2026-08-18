@@ -36,7 +36,7 @@ AI-powered interview preparation platform that analyzes a candidate's resume, pr
 - Zod structured schema validation
 
 # How It Works
-
+```text
 Resume + Self Description + Job Description
                     ↓
               Express API
@@ -56,7 +56,7 @@ Technical + Behavioral Questions
              ATS Resume Generator
                     ↓
               Download PDF
-
+```
 
 # Architecture
 ```text
@@ -75,6 +75,7 @@ Controllers
 AI Service / MongoDB
       ↓
 Gemini API / Database
+```
 
 # Key Learnings
 This project helped me work with:
